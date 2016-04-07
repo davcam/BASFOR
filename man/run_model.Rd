@@ -9,10 +9,35 @@ run_model(ft = FORTYPE, p = params, w = matrix_weather,
   calpT = init$calendar_prunT, caltT = init$calendar_thinT, n = NDAYS,
   NOUT = init$NOUT)
 }
+\arguments{
+\item{ft}{This is an integer which indicates the forest type and is set to 1 for coniferous and 2 for deciduous}
+
+\item{p}{This is a vector that contain the model parameters}
+
+\item{w}{This is a matrix that contains the model input weather data the dimensions are [timesteps,weather inputs]. The seven weather inputs are year, day of year, radiation (MJ/day), mean air temperature (deg C), precipitation (mm/day), surface wind speed (m/s) and vapour pressure (kPa)}
+
+\item{calf}{matrix timeseries of fertilization of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, fertilization)}
+
+\item{calN}{matrix timeseries of N depostion of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, N deposition in kgN /day /m^2)}
+
+\item{calpT}{matrix timeseries of prunings of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, pruning fraction)}
+
+\item{caltT}{matrix timeseries of forest thinnings of dimension [length of timeseries, date vector of length 3]. Wheer the date vector is made up of (year, day of year, thinning fraction)}
+
+\item{n}{length of run in days}
+
+\item{NOUT}{number of output variables}
+}
+\value{
+Returns a matrix of dimension [timesteps,number of outputs]
+}
 \description{
 Run the forest model BASFOR
 }
 \details{
 This is a wrapper function to run BASFOR.
+}
+\examples{
+output <- run_model()
 }
 
