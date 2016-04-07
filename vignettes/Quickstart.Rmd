@@ -1,0 +1,108 @@
+---
+title: "Quickstart to running BASFOR"
+author: "David Cameron"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+fig_caption: yes
+vignette: >
+  %\VignetteIndexEntry{Quickstart}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This short quickstart guide will show you how to run BASFOR for a coniferous for est site. 
+
+We first need to load the package BASFOR into R.
+```{r}
+  library(BASFOR)
+```
+
+## Initialising BASFOR for a CONIFEROUS forest site
+General initialisation comes next via the function "initialise".
+
+```{r}
+init           <- initialise()
+```
+
+There then follows a number of initialisation steps which can be modified for each forest site. 
+
+### Choose whether to run the CONIFEROUS (=1) or DECIDUOUS (=2) forest type 
+
+```{r}
+  FORTYPE        <- as.integer(1)
+```
+
+### Site specific dates  
+```{r}
+  year_start     <- as.integer(1900)
+  doy_start      <- as.integer(1)
+  NDAYS          <- as.integer(40543)
+```
+
+### initialise the weather input data
+In this case we use the dataset "weather_CONIFEROUS_1" that is included in the package. In general 
+we would read in the weather data from file into a dataframe "df_weather" which should have the same columns as "weather_CONIFEROUS_1"
+
+```{r}
+  head(weather_CONIFEROUS_1)
+  df_weather     <- weather_CONIFEROUS_1
+  matrix_weather <- weather_BASFOR( year_start, doy_start, NDAYS, df_weather )
+```
+
+### model parameters
+We can then either use one of the parameter vectors included in the package dataset "df_params" or provide your own vector of parameters. The order of the parameters is important to stick to the order of parameters that you see in df_params as shown below.
+
+```{r}
+  row.names(df_params)
+  df_params      <- df_params
+  parcol         <- 1  
+  params         <- df_params[,parcol]
+```  
+
+### N deposition
+A timeseries of N deposition dates can be provided as shown below. The units are kgN per hectare per year. 
+
+```{r}
+  init$calendar_Ndep [ 1, ] <- c( 1700,200,  3.0 / (365 * 10000) )
+  init$calendar_Ndep [ 2, ] <- c( 1900,200,  3.0 / (365 * 10000) )
+  init$calendar_Ndep [ 3, ] <- c( 1910,200,  4.7 / (365 * 10000) )
+  init$calendar_Ndep [ 4, ] <- c( 1920,200,  6.4 / (365 * 10000) )
+  init$calendar_Ndep [ 5, ] <- c( 1930,200,  8.9 / (365 * 10000) )
+  init$calendar_Ndep [ 6, ] <- c( 1940,200, 12.4 / (365 * 10000) )
+  init$calendar_Ndep [ 7, ] <- c( 1950,200, 17.2 / (365 * 10000) )
+  init$calendar_Ndep [ 8, ] <- c( 1960,200, 23.9 / (365 * 10000) )
+  init$calendar_Ndep [ 9, ] <- c( 1970,200, 30.9 / (365 * 10000) )
+  init$calendar_Ndep [10, ] <- c( 1980,200, 35.0 / (365 * 10000) )
+  init$calendar_Ndep [11, ] <- c( 1990,200, 32.2 / (365 * 10000) )
+  init$calendar_Ndep [12, ] <- c( 2000,200, 25.1 / (365 * 10000) )
+  init$calendar_Ndep [13, ] <- c( 2010,200, 21.2 / (365 * 10000) )
+  init$calendar_Ndep [14, ] <- c( 2100,200, 21.2 / (365 * 10000) )
+```
+
+### forest thinning dates
+Forest thinning fractions can be provided as a timeseries as shown below
+
+```{r}
+  init$calendar_thinT[ 1, ] <- c( 1925,  1, 0.400 )
+  init$calendar_thinT[ 2, ] <- c( 1935,  1, 0.250 )
+  init$calendar_thinT[ 3, ] <- c( 1945,  1, 0.250 )
+  init$calendar_thinT[ 4, ] <- c( 1955,  1, 0.200 )
+  init$calendar_thinT[ 5, ] <- c( 1965,  1, 0.150 )
+  init$calendar_thinT[ 6, ] <- c( 1975,  1, 0.400 )
+  init$calendar_thinT[ 7, ] <- c( 2006,  1, 0.887 )
+```
+
+## run the model
+The model can now be run using the function "run_model".
+
+```{r}
+  output      <- run_model()
+```
+## create plot of the model output
+A plotting function "plot_output" is included in the package so that the model output can be viewed.
+  
+```{r, fig.show='hold',fig.height=8, fig.width=8, fig.cap = "BASFOR model output for a Coniferous site"}
+  outputUnits <- init$outputUnits
+  outputNames <- init$outputNames
+  plot_output()
+```

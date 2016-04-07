@@ -1,0 +1,16 @@
+Package: BASFOR
+Title: This package contains the forest model BASic FORest Model (BASFOR)
+Version: 0.0.0.9000
+Authors@R: c(person("Marcel", "vanOijen", email = "mvano@ceh.ac.uk", role = c("aut", "cre")),person("David", "Cameron", email = "dcam@ceh.ac.uk", role = c("aut", "cre")))
+Author: Marcel vanOijen [aut, cre],
+  David Cameron [aut, cre]
+Maintainer: David Cameron <dcam@ceh.ac.uk>
+Description: This package is the code for the forest model BASFOR.
+Depends: 
+    R (>= 3.1.2)
+License: What license is it under?
+LazyData: true
+RoxygenNote: 5.0.1
+VignetteBuilder: knitr
+Suggests: knitr,
+    rmarkdown

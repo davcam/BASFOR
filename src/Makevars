@@ -1,0 +1,10 @@
+all: $(SHLIB)
+parameters.o: parameters.f90 
+environment.o: environment.f90 
+management.o: management.f90
+tree.o: tree.f90 management.o
+belowgroundres.o: belowgroundres.f90 
+soil.o: soil.f90 
+set_params.o: set_params.f90 
+BASFOR.o: BASFOR.f90 parameters.o environment.o tree.o management.o belowgroundres.o soil.o
+
