@@ -6,18 +6,24 @@
 
 #' Run the forest model BASFOR 
 #' @details This is a wrapper function to run BASFOR.
-#' @param ft This is an integer which indicates the forest type and is set to 1 for coniferous and 2 for deciduous
-#' @param p This is a vector that contain the model parameters
-#' @param w This is a matrix that contains the model input weather data the dimensions are [timesteps,weather inputs]. The seven weather inputs are year, day of year, radiation (MJ/day), mean air temperature (deg C), precipitation (mm/day), surface wind speed (m/s) and vapour pressure (kPa)
-#' @param calf matrix timeseries of fertilization of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, fertilization)   
-#' @param calN matrix timeseries of N depostion of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, N deposition in kgN /day /m^2)
-#' @param calpT matrix timeseries of prunings of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, pruning fraction)
-#' @param caltT matrix timeseries of forest thinnings of dimension [length of timeseries, date vector of length 3]. Wheer the date vector is made up of (year, day of year, thinning fraction)
-#' @param n length of run in days
-#' @param NOUT number of output variables
-#' @return Returns a matrix of dimension [timesteps,number of outputs]
+#' @param ft Integer which indicates the forest type and is set to 1 for coniferous and 2 for deciduous
+#' @param p Vector that contain the model parameters. The order of the parameters in the vector is important and should be consistent with the provided dataset df_params.
+#' @param w Matrix that contains the model input weather data with dimensions [number of timesteps, number of weather inputs]. The seven weather inputs are: year, day of year, radiation (MJ/day), mean air temperature (deg C), precipitation (mm/day), surface wind speed (m/s) and vapour pressure (kPa)
+#' @param calf Matrix timeseries of fertilization of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, fertilization in kgN /day /m^2)   
+#' @param calN Matrix timeseries of N depostion of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, N deposition in kgN /day /m^2)
+#' @param calpT Matrix timeseries of prunings of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, pruning fraction)
+#' @param caltT Matrix timeseries of forest thinnings of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, thinning fraction)
+#' @param n Length of run in days
+#' @param NOUT Number of output variables
+#' @return Returns a matrix of dimension [length of run in days, number of outputs]
 #' @examples
-#' output <- run_model()
+#' FORTYPE        <- as.integer(1)
+#' params         <- df_params[,1]
+#' year_start     <- as.integer(1900); doy_start <- as.integer(1); NDAYS <- as.integer(40543)
+#' df_weather     <- weather_CONIFEROUS_1
+#' matrix_weather <- weather_BASFOR( year_start, doy_start, NDAYS, df_weather )
+#' init           <- initialise()
+#' output         <- run_model()
 #' @export
 #' @useDynLib BASFOR
 run_model <- function(ft      = FORTYPE,
@@ -38,8 +44,17 @@ run_model <- function(ft      = FORTYPE,
 ################################################################################
 ### 2. FUNCTION FOR READING WEATHER DATA
 ################################################################################
-#' Run in the weather input data for BASFOR 
-#' @details This function inputs the weather data from a data frame into an R matrix (matrix_weather).  
+#' Create weather data matrix for BASFOR 
+#' @details This function converts the weather data from a data frame into an R matrix (matrix_weather) which can be passed to BASFOR via the function run_model.
+#' @param y Integer giving the start year
+#' @param d Integer giving the starting day of year
+#' @param n Length of run in days
+#' @param df_weather dataframe containing input weather data. The columns should be year, day of year, radiation (MJ/day), mean air temperature (deg C), precipitation (mm/day), surface wind speed (m/s) and vapour pressure (kPa). See for example dataset weather_CONIFEROUS_1.
+#' @return Returns a matrix (matrix_weather) of dimension [length in days, 7] which is used to input weather to BASFOR in the run_model function.
+#' @examples
+#' year_start     <- as.integer(1900); doy_start <- as.integer(1); NDAYS <- as.integer(40543)
+#' df_weather     <- weather_CONIFEROUS_1
+#' matrix_weather <- weather_BASFOR( year_start, doy_start, NDAYS, df_weather )
 #' @export
 weather_BASFOR <- function(y = year_start,
                            d = doy_start,
@@ -68,6 +83,9 @@ weather_BASFOR <- function(y = year_start,
 ################################################################################
 #' Initialise variables needed to run BASFOR 
 #' @details This function initilaises some matrices needed to run BASFOR
+#' @return Returns a list containing calendar_fert, calendar_Ndep, calendar_prunT, calendar_thinT, outputNames, outputUnits, NOUT needed by functions run_model and plot_output to run BASFOR and plot outputs.
+#' @examples
+#' init <- initialise()
 #' @export
 initialise <- function ()
 {
@@ -105,17 +123,24 @@ return( list(calendar_fert=calendar_fert, calendar_Ndep=calendar_Ndep, calendar_
 ################################################################################
 #' Function for plotting BASFOR model output 
 #' @details This function plots BASFOR model output
+#' @param list_output a list of model outputs
+#' @param vars Vector of characters strings of those output variable names which are to be plotted.
+#' @examples
+#' output <- run_model
+#' plot_output()
 #' @export
 plot_output <- function(
   list_output = list(output),
-  vars        = outputNames[-(1:3)],
-  leg         = paste( "Run", 1:length(list_output) ),
-  leg_title   = "LEGEND",
-  nrow_plot   = ceiling( sqrt((length(vars)+1) * 8/11) ),
-  ncol_plot   = ceiling( (length(vars)+1)/nrow_plot ),
-  lty         = rep(1,length(list_output)),
-  lwd         = rep(3,length(list_output))
+  vars        = init$outputNames[-(1:3)]
 ) {
+  outputNames = init$outputNames
+  outputUnits = init$outputUnits
+  leg         = paste( "Run", 1:length(list_output) )
+  leg_title   = "LEGEND"
+  nrow_plot   = ceiling( sqrt((length(vars)+1) * 8/11) )
+  ncol_plot   = ceiling( (length(vars)+1)/nrow_plot )
+  lty         = rep(1,length(list_output))
+  lwd         = rep(3,length(list_output))
   par( mfrow=c(nrow_plot,ncol_plot), mar=c(2, 2, 2, 1) )
   if (!is.list(list_output)) list_output <- list(list_output) ; nlist <- length(list_output)
   col_vars <- match(vars,outputNames)                         ; nvars <- length(vars)

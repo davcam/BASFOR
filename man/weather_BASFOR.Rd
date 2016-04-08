@@ -2,14 +2,31 @@
 % Please edit documentation in R/initialise_BASFOR_general.R
 \name{weather_BASFOR}
 \alias{weather_BASFOR}
-\title{Run in the weather input data for BASFOR}
+\title{Create weather data matrix for BASFOR}
 \usage{
 weather_BASFOR(y = year_start, d = doy_start, n = NDAYS, df_weather)
 }
+\arguments{
+\item{y}{Integer giving the start year}
+
+\item{d}{Integer giving the starting day of year}
+
+\item{n}{Length of run in days}
+
+\item{df_weather}{dataframe containing input weather data. The columns should be year, day of year, radiation (MJ/day), mean air temperature (deg C), precipitation (mm/day), surface wind speed (m/s) and vapour pressure (kPa). See for example dataset weather_CONIFEROUS_1.}
+}
+\value{
+Returns a matrix (matrix_weather) of dimension [length in days, 7] which is used to input weather to BASFOR in the run_model function.
+}
 \description{
-Run in the weather input data for BASFOR
+Create weather data matrix for BASFOR
 }
 \details{
-This function inputs the weather data from a data frame into an R matrix (matrix_weather).
+This function converts the weather data from a data frame into an R matrix (matrix_weather) which can be passed to BASFOR via the function run_model.
+}
+\examples{
+year_start     <- as.integer(1900); doy_start <- as.integer(1); NDAYS <- as.integer(40543)
+df_weather     <- weather_CONIFEROUS_1
+matrix_weather <- weather_BASFOR( year_start, doy_start, NDAYS, df_weather )
 }
 

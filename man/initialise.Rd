@@ -6,10 +6,16 @@
 \usage{
 initialise()
 }
+\value{
+Returns a list containing calendar_fert, calendar_Ndep, calendar_prunT, calendar_thinT, outputNames, outputUnits, NOUT needed by functions run_model and plot_output to run BASFOR and plot outputs.
+}
 \description{
 Initialise variables needed to run BASFOR
 }
 \details{
 This function initilaises some matrices needed to run BASFOR
+}
+\examples{
+init <- initialise()
 }
 

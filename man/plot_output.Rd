@@ -4,16 +4,21 @@
 \alias{plot_output}
 \title{Function for plotting BASFOR model output}
 \usage{
-plot_output(list_output = list(output), vars = outputNames[-(1:3)],
-  leg = paste("Run", 1:length(list_output)), leg_title = "LEGEND",
-  nrow_plot = ceiling(sqrt((length(vars) + 1) * 8/11)),
-  ncol_plot = ceiling((length(vars) + 1)/nrow_plot), lty = rep(1,
-  length(list_output)), lwd = rep(3, length(list_output)))
+plot_output(list_output = list(output), vars = init$outputNames[-(1:3)])
+}
+\arguments{
+\item{list_output}{a list of model outputs}
+
+\item{vars}{Vector of characters strings of those output variable names which are to be plotted.}
 }
 \description{
 Function for plotting BASFOR model output
 }
 \details{
 This function plots BASFOR model output
+}
+\examples{
+output <- run_model
+plot_output()
 }
 

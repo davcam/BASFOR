@@ -10,26 +10,26 @@ run_model(ft = FORTYPE, p = params, w = matrix_weather,
   NOUT = init$NOUT)
 }
 \arguments{
-\item{ft}{This is an integer which indicates the forest type and is set to 1 for coniferous and 2 for deciduous}
+\item{ft}{Integer which indicates the forest type and is set to 1 for coniferous and 2 for deciduous}
 
-\item{p}{This is a vector that contain the model parameters}
+\item{p}{Vector that contain the model parameters. The order of the parameters in the vector is important and should be consistent with the provided dataset df_params.}
 
-\item{w}{This is a matrix that contains the model input weather data the dimensions are [timesteps,weather inputs]. The seven weather inputs are year, day of year, radiation (MJ/day), mean air temperature (deg C), precipitation (mm/day), surface wind speed (m/s) and vapour pressure (kPa)}
+\item{w}{Matrix that contains the model input weather data with dimensions [number of timesteps, number of weather inputs]. The seven weather inputs are: year, day of year, radiation (MJ/day), mean air temperature (deg C), precipitation (mm/day), surface wind speed (m/s) and vapour pressure (kPa)}
 
-\item{calf}{matrix timeseries of fertilization of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, fertilization)}
+\item{calf}{Matrix timeseries of fertilization of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, fertilization in kgN /day /m^2)}
 
-\item{calN}{matrix timeseries of N depostion of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, N deposition in kgN /day /m^2)}
+\item{calN}{Matrix timeseries of N depostion of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, N deposition in kgN /day /m^2)}
 
-\item{calpT}{matrix timeseries of prunings of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, pruning fraction)}
+\item{calpT}{Matrix timeseries of prunings of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, pruning fraction)}
 
-\item{caltT}{matrix timeseries of forest thinnings of dimension [length of timeseries, date vector of length 3]. Wheer the date vector is made up of (year, day of year, thinning fraction)}
+\item{caltT}{Matrix timeseries of forest thinnings of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, thinning fraction)}
 
-\item{n}{length of run in days}
+\item{n}{Length of run in days}
 
-\item{NOUT}{number of output variables}
+\item{NOUT}{Number of output variables}
 }
 \value{
-Returns a matrix of dimension [timesteps,number of outputs]
+Returns a matrix of dimension [length of run in days, number of outputs]
 }
 \description{
 Run the forest model BASFOR
@@ -38,6 +38,12 @@ Run the forest model BASFOR
 This is a wrapper function to run BASFOR.
 }
 \examples{
-output <- run_model()
+FORTYPE        <- as.integer(1)
+params         <- df_params[,1]
+year_start     <- as.integer(1900); doy_start <- as.integer(1); NDAYS <- as.integer(40543)
+df_weather     <- weather_CONIFEROUS_1
+matrix_weather <- weather_BASFOR( year_start, doy_start, NDAYS, df_weather )
+init           <- initialise()
+output         <- run_model()
 }
 
