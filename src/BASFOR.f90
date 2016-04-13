@@ -158,7 +158,16 @@ do day = 1, NDAYS
   y(day,24)  = ET_mmd                                 ! mm d-1
   y(day,25)  = NemissionN2O                           ! kg N m-2 d-1
   y(day,26)  = NemissionNO                            ! kg N m-2 d-1
+! New outputs for ISIMIP
+  y(day,27)  = BA                                     ! m2 m-2
+  y(day,28)  = dCS                                    ! kg C m-2 d-1
+  y(day,29)  = treedens                               ! kg C m-2
+  y(day,30)  = CS/WOODDENS                            ! m3 m-2
+  y(day,32)  = (PARabs/PAR)*100                       ! %
+  y(day,33)  = Evap                                   ! mm d-1
+  y(day,34)  = RAINint/2.                             ! mm d-1
 
+  
 ! Update model states
   CR    = CR    + gCR - dCR
   CS    = CS    + gCS - dCS

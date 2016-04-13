@@ -102,7 +102,9 @@ initialise <- function ()
   "WC"             , "CLITT"         , "CSOM"         , "Csoil"        , "Nsoil"     ,
   "DBH"            , "H"             , "LAI"          ,
   "Rsoil"          , "NEE_gCm2d"     , "GPP_gCm2d"    , "Reco_gCm2d"   ,
-  "ET_mmd"         , "NemissionN2O"  , "NemissionNO" )
+  "ET_mmd"         , "NemissionN2O"  , "NemissionNO"  ,
+  "BA"             , "Harvest"       , "treedens"     , "StandVol"     ,
+  "FracPARabs"     , "Evap"          , "EvapCanopy"   )
   
  outputUnits <- c(
    "y"             , "y"             , "d"            ,
@@ -112,7 +114,9 @@ initialise <- function ()
    "(m3 m-3)"      , "(kg C m-2)"    , "(kg C m-2)"   , "(t C ha-1)"   , "(t N ha-1)",
    "(m)"           , "(m)"           , "(m2 m-2)"     ,
    "(kg C m-2 d-1)", "(g C m-2 d-1)" , "(g C m-2 d-1)", "(g C m-2 d-1)",
-   "(mm d-1)"      , "(kg N m-2 d-1)", "(kg N m-2 d-1)" )  
+   "(mm d-1)"      , "(kg N m-2 d-1)", "(kg N m-2 d-1)",
+   "(m2 m-2)"      , "(kg C m-2 d-1)", "(kg C m-2)"   , "m3 m-2",
+   "%"             , "(mm d-1)"      , "(mm d-1)"     )  
   
  NOUT <- as.integer( length(outputNames) )
 return( list(calendar_fert=calendar_fert, calendar_Ndep=calendar_Ndep, calendar_prunT=calendar_prunT, calendar_thinT=calendar_thinT, outputNames=outputNames, outputUnits=outputUnits, NOUT=NOUT) )
