@@ -164,10 +164,13 @@ Contains
     NPPmaxN     = GPP * (1.-GAMMA)
   end Subroutine NPP
 
-  Subroutine allocation(fTran,LAI)
+  Subroutine allocation(FORTYPE,fTran,LAI)
+  integer :: FORTYPE
   real :: fTran,LAI
     FL = FLMAX * fTran * NEFF                                     ! -
-    if (LAI>LAIMAX) FL = 0
+    if (FORTYPE==2) then
+       if (LAI>LAIMAX) FL = 0
+    end if    
     FR = (1 - (FL+FB+FS))
   end Subroutine allocation
 

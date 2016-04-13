@@ -117,7 +117,7 @@ do day = 1, NDAYS
   call water_flux(WA,Evap,Tran,fTran,RWA,WFPS)
   call Nsupply(CR,NMIN,Nsup)
   call NPP(fTran)
-  call allocation(fTran,LAI)
+  call allocation(FORTYPE,fTran,LAI)
   call NdemandOrgans
   call gtreeNupt(Nsup)
   call CNtree(CR,CS,CB)
