@@ -163,9 +163,9 @@ do day = 1, NDAYS
   y(day,28)  = dCS/WOODDENS                           ! m3 m-2
   y(day,29)  = treedens                               ! trees m-2
   y(day,30)  = CS/WOODDENS                            ! m3 m-2
-  y(day,32)  = (PARabs/PAR)*100                       ! %
-  y(day,33)  = Evap                                   ! mm d-1
-  y(day,34)  = RAINint/2.                             ! mm d-1
+  y(day,31)  = (PARabs/PAR)*100                       ! %
+  y(day,32)  = Evap                                   ! mm d-1
+  y(day,33)  = RAINint/2.                             ! mm d-1
 
   
 ! Update model states
