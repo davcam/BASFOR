@@ -115,7 +115,7 @@ initialise <- function ()
    "(m)"           , "(m)"           , "(m2 m-2)"     ,
    "(kg C m-2 d-1)", "(g C m-2 d-1)" , "(g C m-2 d-1)", "(g C m-2 d-1)",
    "(mm d-1)"      , "(kg N m-2 d-1)", "(kg N m-2 d-1)",
-   "(m2 m-2)"      , "(kg C m-2 d-1)", "(kg C m-2)"   , "m3 m-2",
+   "(m2 m-2)"      , "(m3 m-2)"      , "(trees /m-2)"  , "m3 m-2",
    "%"             , "(mm d-1)"      , "(mm d-1)"     )  
   
  NOUT <- as.integer( length(outputNames) )
