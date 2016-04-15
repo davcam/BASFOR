@@ -166,6 +166,8 @@ do day = 1, NDAYS
   y(day,31)  = (PARabs/PAR)*100                       ! %
   y(day,32)  = Evap                                   ! mm d-1
   y(day,33)  = RAINint/2.                             ! mm d-1
+  y(day,34)  = CLITT/NLITT                            ! 
+  y(day,35)  = (CSOMF + CSOMS)/(NSOMF + NSOMS)        ! 
 
   
 ! Update model states
