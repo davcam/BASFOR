@@ -1,4 +1,4 @@
-Subroutine BASFOR(FORTYPE,PARAMS,MATRIX_WEATHER, &
+Subroutine BASFOR(FORTYPE,RESTRT,PARAMS,MATRIX_WEATHER, &
                   CALENDAR_FERT,CALENDAR_NDEP,CALENDAR_PRUNT,CALENDAR_THINT, &
 				  NDAYS,NOUT, &
 				  y)
@@ -19,14 +19,15 @@ use management
 implicit none
 
 ! As long as the total number of parameters stays below 100, the next line need not be changed
-integer                   :: FORTYPE             
+integer                   :: FORTYPE
+integer                   :: RESTRT
 integer, parameter        :: NPAR     = 100
 real                      :: PARAMS(NPAR)
-integer, parameter        :: NWEATHER = 7
+integer, parameter        :: NWEATHER = 8
 real                      :: MATRIX_WEATHER(NMAXDAYS,NWEATHER)
-real   , dimension(100,3) :: CALENDAR_FERT, CALENDAR_NDEP, CALENDAR_PRUNT, CALENDAR_THINT
-integer, dimension(100,2) :: DAYS_FERT    , DAYS_NDEP    , DAYS_PRUNT    , DAYS_THINT
-real   , dimension(100)   :: NFERTV       , NDEPV        , FRPRUNT	     , FRTHINT
+real   , dimension(400,3) :: CALENDAR_FERT, CALENDAR_NDEP, CALENDAR_PRUNT, CALENDAR_THINT
+integer, dimension(400,2) :: DAYS_FERT    , DAYS_NDEP    , DAYS_PRUNT    , DAYS_THINT
+real   , dimension(400)   :: NFERTV       , NDEPV        , FRPRUNT	     , FRTHINT
 real                      :: y(NDAYS,NOUT)
 
 integer :: day, doy, NDAYS, NOUT, year
@@ -56,6 +57,8 @@ TI     = MATRIX_WEATHER(:,4)
 RAINI  = MATRIX_WEATHER(:,5)
 WNI    = MATRIX_WEATHER(:,6)
 VPI    = MATRIX_WEATHER(:,7)
+CO2AI  = MATRIX_WEATHER(:,8)
+
 ! Calendar of management
 DAYS_FERT  = CALENDAR_FERT (:,1:2)
 DAYS_NDEP  = CALENDAR_NDEP (:,1:2)
@@ -82,7 +85,7 @@ if ( FORTYPE == 2) then ! DECIDUOUS trees
   CRES   = CLtree0 * TREEDENS0 * 0.1
 else
   CRES   = 0.
-end if    
+end if
 WA       = 1000 * ROOTD * WCST * FWCFC
 CLITT    = CLITT0
 CSOMF    = CSOM0 * FCSOMF0
@@ -92,24 +95,27 @@ NSOMF    = (CSOM0 *    FCSOMF0)  / CNSOMF0
 NSOMS    = (CSOM0 * (1-FCSOMF0)) / CNSOMS0
 NMIN     = NMIN0
 
+if (RESTRT == 1) READ(25) Thist,chillday,Tsum,treedens,CR,CS,CB,CL,NL,CRES,WA,CLITT,CSOMF,CSOMS,NLITT,NSOMS,NSOMF,NMIN
 
 do day = 1, NDAYS
 
 ! Environment
   call set_weather_day(day, year,doy)
 
-! Tree phenology  
+! Tree phenology
   if ( FORTYPE == 2) then ! DECIDUOUS trees
     call dtsum_dchillday(FORTYPE,chillday,doy,Tsum, dchillday,dTsum)
     chillday = chillday + dchillday
     Tsum     = Tsum     + dTsum
   end if
   call phenology(FORTYPE,chillday,doy,Tsum, leaffall,treegrow)
-  
+
 ! Management
+
   call fert_prune_thin(year,doy,DAYS_FERT,NFERTV,DAYS_PRUNT,FRPRUNT,DAYS_THINT,FRTHINT)
-  treedens = treedens - thintreedens
   call morphology(CL,CS,CB,treedens,LAI)
+  treedens = treedens - thintreedens
+  if (thinFRT >= 0.95) treedens = TREEDENS0
   call foliarDynamics(CL,CRES,fTran,NL,LAI)
 
 ! Update model fluxes
@@ -123,7 +129,7 @@ do day = 1, NDAYS
   call CNtree(CR,CS,CB)
   call water(WA,RAINint,Evap,Tran,LAI)
   call Tsoil_calc
-  call CNsoil(RWA,WFPS,WA,gCR,CLITT,CSOMF,NLITT,NSOMF,NSOMS,NMIN,CSOMS) 
+  call CNsoil(RWA,WFPS,WA,gCR,CLITT,CSOMF,NLITT,NSOMF,NSOMS,NMIN,CSOMS)
   call N_dep(year,doy,DAYS_NDEP,NDEPV)
 
 ! Outputs
@@ -166,10 +172,10 @@ do day = 1, NDAYS
   y(day,31)  = (PARabs/PAR)*100                       ! %
   y(day,32)  = Evap                                   ! mm d-1
   y(day,33)  = RAINint/2.                             ! mm d-1
-  y(day,34)  = CLITT/NLITT                            ! 
-  y(day,35)  = (CSOMF + CSOMS)/(NSOMF + NSOMS)        ! 
+  y(day,34)  = CLITT/NLITT                            !
+  y(day,35)  = (CSOMF + CSOMS)/(NSOMF + NSOMS)        !
 
-  
+
 ! Update model states
   CR    = CR    + gCR - dCR
   CS    = CS    + gCS - dCS
@@ -194,5 +200,8 @@ do day = 1, NDAYS
 
 end do ! end time loop
 
-end  
+WRITE(26) Thist,chillday,Tsum,treedens,CR,CS,CB,CL,NL,CRES,WA,CLITT,CSOMF,CSOMS,NLITT,NSOMS,NSOMF,NMIN
+close(25)
+close(26)
+end Subroutine BASFOR
 

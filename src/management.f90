@@ -11,12 +11,12 @@ Contains
                                       DAYS_PRUNT,FRPRUNT, &
                                       DAYS_THINT,FRTHINT)
   integer                  :: year,doy,i
-  integer,dimension(100,2) :: DAYS_FERT, DAYS_PRUNT, DAYS_THINT
-  real   ,dimension(100  ) :: NFERTV   , FRPRUNT   , FRTHINT
+  integer,dimension(400,2) :: DAYS_FERT, DAYS_PRUNT, DAYS_THINT
+  real   ,dimension(400  ) :: NFERTV   , FRPRUNT   , FRTHINT
   Nfert   = 0
   prunFRT = 0
   thinFRT = 0
-  do i=1,100    
+  do i=1,400    
     if ( (year==DAYS_FERT (i,1)) .and. (doy==DAYS_FERT (i,2)) ) then
       Nfert   = NFERTV (i)
 	end if

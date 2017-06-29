@@ -20,7 +20,7 @@ init           <- initialise()
 ## ------------------------------------------------------------------------
   row.names(df_params)
   df_params      <- df_params
-  parcol         <- 1  
+  parcol         <- 1
   params         <- df_params[,parcol]
 
 ## ------------------------------------------------------------------------
@@ -52,7 +52,4 @@ init           <- initialise()
   output      <- run_model()
 
 ## ---- fig.show='hold',fig.height=8, fig.width=8, fig.cap = "BASFOR model output for a Coniferous site"----
-  outputUnits <- init$outputUnits
-  outputNames <- init$outputNames
   plot_output()
-

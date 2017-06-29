@@ -4,7 +4,7 @@ use parameters
 implicit none
 real    :: GR, PAR, T, RAIN, WN, VP, CO2A
 integer :: doyi(NMAXDAYS), yeari(NMAXDAYS)
-real    :: GRI(NMAXDAYS), TI(NMAXDAYS), RAINI(NMAXDAYS), WNI(NMAXDAYS), VPI(NMAXDAYS)
+real    :: GRI(NMAXDAYS), TI(NMAXDAYS), RAINI(NMAXDAYS), WNI(NMAXDAYS), VPI(NMAXDAYS), CO2AI(NMAXDAYS)
 real    :: DAYL
 real    :: Ndep
 
@@ -21,8 +21,9 @@ Subroutine set_weather_day(day, year,doy)
   WN    = WNI(day)
   VP    = VPI(day)
   year  = yeari(day)
-  y     = year - 1900
-  CO2A  = 291 + 1.15*y - 0.03*(y**2) + 0.000354*(y**3) - 0.0000009*(y**4)
+  CO2A  = CO2AI(day)
+  ! y     = year - 1900
+  ! CO2A  = 291 + 1.15*y - 0.03*(y**2) + 0.000354*(y**3) - 0.0000009*(y**4)
 end Subroutine set_weather_day
 
 Subroutine DDAYL(doy)
@@ -39,14 +40,14 @@ end Subroutine DDAYL
 
 Subroutine N_dep(year,doy,DAYS_NDEP,NDEPV)
   integer                  :: year,doy,j
-  integer,dimension(100,2) :: DAYS_NDEP
-  real   ,dimension(100  ) :: NDEPV
+  integer,dimension(400,2) :: DAYS_NDEP
+  real   ,dimension(400  ) :: NDEPV
   integer                  :: idep
   real                     :: NDEPV_interval,t
-  real   ,dimension(100)   :: tNdep
+  real   ,dimension(400)   :: tNdep
   t     = year           + (doy           -0.5)/366
   tNdep = DAYS_NDEP(:,1) + (DAYS_NDEP(:,2)-0.5)/366
-  do j = 2,100
+  do j = 2,400
    if ( (tNdep(j-1)<t) .and. (tNdep(j)>=t) ) idep = j-1
   end do
   NDEPV_interval = NDEPV(idep+1) - NDEPV(idep)

@@ -26,20 +26,20 @@ init           <- initialise()
 
 There then follows a number of initialisation steps which can be modified for each forest site. 
 
-### Choose whether to run the CONIFEROUS (=1) or DECIDUOUS (=2) forest type 
+### choose the coniferous (=1) or deciduous (=2) forest type 
 
 ```{r}
   FORTYPE        <- as.integer(1)
 ```
 
-### Site specific dates  
+### set run dates and length
 ```{r}
   year_start     <- as.integer(1900)
   doy_start      <- as.integer(1)
   NDAYS          <- as.integer(40543)
 ```
 
-### initialise the weather input data
+### weather input data
 In this case we use the dataset "weather_CONIFEROUS_1" that is included in the package. In general 
 we would read in the weather data from file into a dataframe "df_weather" which should have the same columns as "weather_CONIFEROUS_1"
 
@@ -79,7 +79,7 @@ A timeseries of N deposition dates can be provided as shown below. The units are
   init$calendar_Ndep [14, ] <- c( 2100,200, 21.2 / (365 * 10000) )
 ```
 
-### forest thinning dates
+### forest thinning
 Forest thinning fractions can be provided as a timeseries as shown below
 
 ```{r}
@@ -92,17 +92,15 @@ Forest thinning fractions can be provided as a timeseries as shown below
   init$calendar_thinT[ 7, ] <- c( 2006,  1, 0.887 )
 ```
 
-## run the model
+## Run the model
 The model can now be run using the function "run_model".
 
 ```{r}
   output      <- run_model()
 ```
-## create plot of the model output
+## Create a plot of the model outputs
 A plotting function "plot_output" is included in the package so that the model output can be viewed.
   
 ```{r, fig.show='hold',fig.height=8, fig.width=8, fig.cap = "BASFOR model output for a Coniferous site"}
-  outputUnits <- init$outputUnits
-  outputNames <- init$outputNames
   plot_output()
 ```

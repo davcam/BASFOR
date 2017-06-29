@@ -4,12 +4,12 @@
 ### 1. MODEL LIBRARY FILE & FUNCTION FOR RUNNING THE MODEL
 ################################################################################
 
-#' Run the forest model BASFOR 
+#' Run the forest model BASFOR
 #' @details This is a wrapper function to run BASFOR.
 #' @param ft Integer which indicates the forest type and is set to 1 for coniferous and 2 for deciduous
 #' @param p Vector that contain the model parameters. The order of the parameters in the vector is important and should be consistent with the provided dataset df_params.
 #' @param w Matrix that contains the model input weather data with dimensions [number of timesteps, number of weather inputs]. The seven weather inputs are: year, day of year, radiation (MJ/day), mean air temperature (deg C), precipitation (mm/day), surface wind speed (m/s) and vapour pressure (kPa)
-#' @param calf Matrix timeseries of fertilization of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, fertilization in kgN /day /m^2)   
+#' @param calf Matrix timeseries of fertilization of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, fertilization in kgN /day /m^2)
 #' @param calN Matrix timeseries of N depostion of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, N deposition in kgN /day /m^2)
 #' @param calpT Matrix timeseries of prunings of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, pruning fraction)
 #' @param caltT Matrix timeseries of forest thinnings of dimension [length of timeseries, date vector of length 3]. Where the date vector is made up of (year, day of year, thinning fraction)
@@ -27,6 +27,7 @@
 #' @export
 #' @useDynLib BASFOR
 run_model <- function(ft      = FORTYPE,
+                      rstrt   = RESTRT,
                       p       = params,
                       w       = matrix_weather,
                       calf    = init$calendar_fert,
@@ -36,15 +37,15 @@ run_model <- function(ft      = FORTYPE,
                       n       = NDAYS,
                       NOUT    = init$NOUT) {
 
-  output <- .Fortran('BASFOR',ft,p,w,calf,calN,calpT,caltT,n,NOUT,
-                     matrix(0,n,NOUT)) [[10]]
+  output <- .Fortran('BASFOR',ft,rstrt,p,w,calf,calN,calpT,caltT,n,NOUT,
+                     matrix(0,n,NOUT)) [[11]]
   return(output)
 }
 
 ################################################################################
 ### 2. FUNCTION FOR READING WEATHER DATA
 ################################################################################
-#' Create weather data matrix for BASFOR 
+#' Create weather data matrix for BASFOR
 #' @details This function converts the weather data from a data frame into an R matrix (matrix_weather) which can be passed to BASFOR via the function run_model.
 #' @param y Integer giving the start year
 #' @param d Integer giving the starting day of year
@@ -64,24 +65,25 @@ weather_BASFOR <- function(y = year_start,
   while( df_weather[row_start,]$year< y ) { row_start <- row_start+1 }
   while( df_weather[row_start,]$doy < d ) { row_start <- row_start+1 }
   df_weather_sim        <- df_weather[row_start:(row_start+n-1),]
-  NMAXDAYS              <- as.integer(60000)
-  NWEATHER              <- as.integer(7)
+  NMAXDAYS              <- as.integer(170000)
+  NWEATHER              <- as.integer(8)
   matrix_weather        <- matrix( 0., nrow=NMAXDAYS, ncol=NWEATHER )
   matrix_weather[1:n,1] <- df_weather_sim$year
   matrix_weather[1:n,2] <- df_weather_sim$doy
   matrix_weather[1:n,3] <- df_weather_sim$GR
   matrix_weather[1:n,4] <- df_weather_sim$T
-  matrix_weather[1:n,5] <- df_weather_sim$RAIN   
+  matrix_weather[1:n,5] <- df_weather_sim$RAIN
   matrix_weather[1:n,6] <- df_weather_sim$WN
   matrix_weather[1:n,7] <- df_weather_sim$VP
+  matrix_weather[1:n,8] <- df_weather_sim$CO2A
   return(matrix_weather)
 }
-   
+
 ################################################################################
 ### 3. OUTPUT VARIABLES
 ################################################################################
 ################################################################################
-#' Initialise variables needed to run BASFOR 
+#' Initialise variables needed to run BASFOR
 #' @details This function initilaises some matrices needed to run BASFOR
 #' @return Returns a list containing calendar_fert, calendar_Ndep, calendar_prunT, calendar_thinT, outputNames, outputUnits, NOUT needed by functions run_model and plot_output to run BASFOR and plot outputs.
 #' @examples
@@ -89,10 +91,10 @@ weather_BASFOR <- function(y = year_start,
 #' @export
 initialise <- function ()
 {
- calendar_fert  <- matrix( -1, nrow=100, ncol=3 )
- calendar_Ndep  <- matrix( -1, nrow=100, ncol=3 )
- calendar_prunT <- matrix( -1, nrow=100, ncol=3 )
- calendar_thinT <- matrix( -1, nrow=100, ncol=3 )
+ calendar_fert  <- matrix( -1, nrow=400, ncol=3 )
+ calendar_Ndep  <- matrix( -1, nrow=400, ncol=3 )
+ calendar_prunT <- matrix( -1, nrow=400, ncol=3 )
+ calendar_thinT <- matrix( -1, nrow=400, ncol=3 )
 
  outputNames <- c(
   "Time"           , "year"          , "doy"          ,
@@ -105,7 +107,7 @@ initialise <- function ()
   "ET_mmd"         , "NemissionN2O"  , "NemissionNO"  ,
   "BA"             , "Harvest"       , "treedens"     , "StandVol"     ,
   "FracPARabs"     , "Evap"          , "EvapCanopy"   , "CNLITT"       , "CNSOM")
-  
+
  outputUnits <- c(
    "y"             , "y"             , "d"            ,
    "(degC)"        , "(mm d-1)"      ,
@@ -116,16 +118,16 @@ initialise <- function ()
    "(kg C m-2 d-1)", "(g C m-2 d-1)" , "(g C m-2 d-1)", "(g C m-2 d-1)",
    "(mm d-1)"      , "(kg N m-2 d-1)", "(kg N m-2 d-1)",
    "(m2 m-2)"      , "(m3 m-2)"      , "(trees /m-2)"  , "m3 m-2"      ,
-   "%"             , "(mm d-1)"      , "(mm d-1)"     , "(-)"          , "(-)")  
-  
+   "%"             , "(mm d-1)"      , "(mm d-1)"     , "(-)"          , "(-)")
+
  NOUT <- as.integer( length(outputNames) )
 return( list(calendar_fert=calendar_fert, calendar_Ndep=calendar_Ndep, calendar_prunT=calendar_prunT, calendar_thinT=calendar_thinT, outputNames=outputNames, outputUnits=outputUnits, NOUT=NOUT) )
-}   
+}
 
 ################################################################################
 ### 4. FUNCTIONS FOR EXPORTING THE RESULTS TO FILE (pdf with plots, txt with table)
 ################################################################################
-#' Function for plotting BASFOR model output 
+#' Function for plotting BASFOR model output
 #' @details This function plots BASFOR model output
 #' @param list_output a list of model outputs
 #' @param vars Vector of characters strings of those output variable names which are to be plotted.
@@ -158,7 +160,7 @@ plot_output <- function(
     if (nlist >= 2) {
       for (il in 2:nlist) {
       points( list_output[[il]][,1], list_output[[il]][,c],
-              col=il, type='l', lty=lty[il], lwd=lwd[il] )            
+              col=il, type='l', lty=lty[il], lwd=lwd[il] )
       }
     }
     if ( (iv%%(nrow_plot*ncol_plot-1)==0) || (iv==nvars) ) {
@@ -180,12 +182,12 @@ table_output <- function(
   for (il in 1:nlist) {
     table_il     <- if (nvars==1) c    (vars, list_output[[il]][,col_vars]) else
                                   rbind(vars, list_output[[il]][,col_vars])
-    table_output <- cbind( table_output, table_il ) 
+    table_output <- cbind( table_output, table_il )
   }
   colnames(table_output) <- c( "",rep(leg,each=nvars) )
   write.table( table_output, file_table, sep="\t", row.names=F )
 }
-   
+
 ################################################################################
 ### 5. FUNCTIONS FOR ANALYSIS
 
