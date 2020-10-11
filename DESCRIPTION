@@ -1,6 +1,6 @@
 Package: BASFOR
 Title: This package contains the forest model BASic FORest Model (BASFOR)
-Version: 1,0
+Version: 1.0
 Authors@R: c(person("Marcel", "vanOijen", email = "mvano@ceh.ac.uk", role = c("aut", "cre")),person("David", "Cameron", email = "dcam@ceh.ac.uk", role = c("aut", "cre")))
 Author: Marcel vanOijen [aut, cre],
   David Cameron [aut, cre]
