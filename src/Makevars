@@ -1,3 +1,5 @@
+PKG_FCFLAGS = -O3 -fdefault-real-8
+
 all: $(SHLIB)
 parameters.o: parameters.f90 
 environment.o: environment.f90 
