@@ -22,7 +22,8 @@ Subroutine set_weather_day(day, year,doy)
   VP    = VPI(day)
   year  = yeari(day)
   y     = year - 1900
-  CO2A  = 291 + 1.15*y - 0.03*(y**2) + 0.000354*(y**3) - 0.0000009*(y**4)
+  CO2A  = 350.
+!  CO2A  = 291 + 1.15*y - 0.03*(y**2) + 0.000354*(y**3) - 0.0000009*(y**4)
 end Subroutine set_weather_day
 
 Subroutine DDAYL(doy)
