@@ -5,7 +5,7 @@ module parameters
   real   , parameter :: PI    = ACOS(-1.0)
   
 ! Environment
-  integer, parameter :: NMAXDAYS = 60000
+  integer, parameter :: NMAXDAYS = 182500
   real   , parameter :: CO20  = 350    ! (ppm) Reference value of [CO2] at which fLUECO2 = 1
   real               :: LAT
 
